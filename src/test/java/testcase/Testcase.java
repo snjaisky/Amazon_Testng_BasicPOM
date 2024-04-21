@@ -7,9 +7,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 
 import BaseClass.Baseclass;
+import pageObjects.CartPage;
 import pageObjects.LandingPage;
 import pageObjects.SearchResultsPage;
 import pageObjects.SigninPage;
@@ -19,6 +21,7 @@ public class Testcase extends Baseclass {
 	LandingPage landingpage;
 	SearchResultsPage searchResult;
 	SigninPage signin;
+	CartPage cartpage;
 
 	@Test
 	public void FirstTest() throws InterruptedException, IOException {
@@ -40,15 +43,28 @@ public class Testcase extends Baseclass {
 
 		landingpage = launchApplication();
 		signin = landingpage.Signin();
-		String title= landingpage.VerifyPageTitle();
+		String title = landingpage.VerifyPageTitle();
 		Assert.assertEquals(title, "Amazon Sign In");
 		signin.enterEmailaddress(prop.getProperty("username"));
 		Assert.assertTrue(signin.isErrorMessageDisplayed());
-		
-
 	}
+	
+	@Test
+	public void addItemToCart() throws Exception {
+		
+		landingpage = launchApplication();
+		searchResult = landingpage.SearchFor("iphone");
+		Thread.sleep(2000);
+		cartpage = searchResult.AddItemToCart("Apple iPhone 13 (128GB) - Starlight");
+		String Expected = cartpage.ValidateAddedToCartNotification();
+		Assert.assertEquals("Added to Cart", Expected);
+		
+		}
+	
+	
+	
 
-	@AfterClass
+	@AfterTest
 	public void close() {
 		TearDown();
 	}
